@@ -21,17 +21,18 @@ class ProxyTxtRW(Read):
             return self.__result
 
     def write(self, text):
-        self.__real_writer.write(text)
-        self.__result = text
-        self.__is_actual = True
+        current_content = self.__real_reader.read()
+        if text != current_content:
+            self.__real_writer.write(text)
+            self.__result = text
+            self.__is_actual = True
 
 
 if __name__ == '__main__':
     reader_reader = TxtReader('my_file.txt')
     writer_writer = TxtWriter('my_file.txt')
     proxy = ProxyTxtRW(reader_reader, writer_writer)
-    print(proxy.read())  # тут прочитали файл
-    print(proxy.read())  # тут вже не читаємо, а забираємо текст файлу
+    print(proxy.read())  # Read file
     # Write new content through the proxy
     new_content = "This is new content written through the proxy."
     proxy.write(new_content)
